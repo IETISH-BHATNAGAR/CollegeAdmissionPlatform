@@ -1,0 +1,173 @@
+﻿@model CollegeAdmissionPlatform.Models.Student
+
+@{
+    ViewData["Title"] = "Student Registration";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Student Registration</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" asp-controller="Registration" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Pname"></label>
+                            <input asp-for="Pname" class="form-control" />
+                            <span asp-validation-for="Pname" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DateOfBirth"></label>
+                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" type="email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber"></label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Address"></label>
+                            <textarea asp-for="Address" class="form-control"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="City"></label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StateId"></label>
+                            <select asp-for="StateId" asp-items="ViewBag.States" class="form-control">
+                                <option value="">-- Select State --</option>
+                            </select>
+                            <span asp-validation-for="StateId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DistrictId">District</label>
+                            <select asp-for="DistrictId" asp-items="ViewBag.Districts" class="form-control">
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DepartmentId"></label>
+                            <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control">
+                                <option value="">-- Select Department --</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="LevelId"></label>
+                            <select asp-for="LevelId" asp-items="ViewBag.Levels" class="form-control">
+                                <option value="">-- Select Level --</option>
+                            </select>
+                            <span asp-validation-for="LevelId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="CourseId">Course</label>
+                            <select asp-for="CourseId" asp-items="ViewBag.Courses" class="form-control">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PasswordHash">Password</label>
+                            <input asp-for="PasswordHash" class="form-control" type="password" />
+                            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                        </div><br />
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <p>Already have an account? <a href="@Url.Action("Login", "Login")">Login here</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $('#StateId').change(function () {
+                var stateId = $(this).val();
+                if (stateId) {
+                    $.getJSON('@Url.Action("GetDistricts", "Registration")', { stateId: stateId }, function (data) {
+                        var districtDropdown = $('#DistrictId');
+                        districtDropdown.empty();
+                        districtDropdown.append('<option value="">-- Select District --</option>');
+                        $.each(data, function (i, district) {
+                            districtDropdown.append('<option value="' + district.districtId + '">' + district.districtName + '</option>');
+                        });
+                    });
+                }else { $('#DistrictId').empty(); $('#DistrictId').append('<option value="">-- Select District --</option>'); }
+            });
+
+            $('#DepartmentId').change(function () {
+                $('#LevelId').val("");
+                $('#CourseId').empty();
+                $('#CourseId').append('<option value="">-- Select Course --</option>');
+            });
+
+            $('#LevelId').change(function () {
+                var departmentId = $('#DepartmentId').val();
+                var levelId = $(this).val();
+                if (departmentId && levelId) {
+                    $.getJSON('@Url.Action("GetCourses", "Registration")', { departmentId: departmentId, levelId: levelId }, function (data) {
+                        var courseDropdown = $('#CourseId');
+                        courseDropdown.empty();
+                        courseDropdown.append('<option value="">-- Select Course --</option>');
+                        $.each(data, function (i, course) {
+                            courseDropdown.append('<option value="' + course.courseId + '">' + course.courseName + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+
+    </script>
+
+}

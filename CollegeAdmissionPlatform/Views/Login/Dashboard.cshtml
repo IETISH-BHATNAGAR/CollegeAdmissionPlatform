@@ -1,0 +1,76 @@
+﻿@model CollegeAdmissionPlatform.Models.StudentViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - College Admission Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        .dashboard {
+            margin-top: 20px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .card-body ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .card-body li {
+            margin: 10px 0;
+        }
+
+            .card-body li strong {
+                min-width: 150px;
+                display: inline-block;
+            }
+
+        .card-footer a {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container dashboard">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2>Welcome, @Model.FullName!</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Here are your details:</h4>
+                        <ul>
+                            <li><strong>Full Name:</strong> @Model.FullName</li>
+                            <li><strong>Parent's/Guardian Name:</strong> @Model.ParentName</li>
+                            <li><strong>Date of Birth:</strong> @Model.Dob.ToShortDateString()</li>
+                            <li><strong>Email Id:</strong> @Model.EmailId<li>
+                            <li><strong>Phone Number:</strong> @Model.Phone</li>
+                            <li><strong>Address:</strong> @Model.FullAddress</li>
+                            <li><strong>City:</strong> @Model.City</li>
+                            <li><strong>District:</strong> @Model.DistrictName</li>
+                            <li><strong>State:</strong> @Model.StateName</li>
+                            <li><strong>Department:</strong> @Model.DepartmentName</li>
+                            <li><strong>Level:</strong> @Model.LevelName</li>
+                            <li><strong>Course:</strong> @Model.CourseName</li>
+                            <li><strong>Username:</strong> @Model.Username</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a asp-action="Logout" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br /><br />
+</body>
+</html>
